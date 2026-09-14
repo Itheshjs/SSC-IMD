@@ -1,0 +1,29 @@
+x++  → use first, increase later
+++x  → increase first, use later
+
+5 / 2 → 2       (integer division)
+17 % 5 → 2      (remainder)
+
+(int)10.9 → 10
+
+'A' → character
+"A" → string
+
+char → single character
+float → floating point
+double → higher precision
+
+PC → address of next instruction
+
+Stack → LIFO
+Queue → FIFO
+
+BST inorder → sorted order
+
+XOR → 1 when inputs are different
+
+OSI routing → Network Layer
+
+DNS → Domain Name → IP address
+
+Recursion → Call Stack
