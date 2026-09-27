@@ -1,0 +1,1880 @@
+Pasted text.txt
+Document
+this day6 explain today all concepts and everything
+DAY 6 / 41
+
+Days remaining: 35
+
+Today's objective
+
+Today we begin the High-Weightage CSE Core phase.
+
+🎯 DAY 6 = OPERATING SYSTEMS
+
+I am choosing Operating Systems today because it is explicitly part of the CSE/IT syllabus, and previous SSC Scientific Assistant papers contain direct questions on OS services, threads, memory management, scheduling, fragmentation, Unix and related concepts.
+
+Your syllabus specifically includes:
+
+System Calls
+Processes
+Threads
+IPC
+Concurrency
+Synchronization
+Deadlock
+CPU Scheduling
+I/O Scheduling
+Memory Management
+Virtual Memory
+File Systems
+
+A previous SSC Scientific Assistant paper, for example, asked about threads sharing resources, memory partitioning, OS functions, and scheduling.
+
+So today we are going to build the complete OS foundation, from zero.
+
+PART 1 — WHAT IS AN OPERATING SYSTEM?
+1. What is OS?
+
+An Operating System is system software that acts as an intermediary between:
+
+USER
+ ↓
+APPLICATIONS
+ ↓
+OPERATING SYSTEM
+ ↓
+HARDWARE
+
+Examples:
+
+Windows
+Linux
+macOS
+Android
+Unix
+Simple example
+
+You open Chrome.
+
+You don't directly tell the CPU:
+
+"Give me RAM."
+
+Instead:
+
+Chrome
+ ↓
+Operating System
+ ↓
+RAM / CPU / Disk / Network
+
+The OS manages those resources.
+
+Main responsibilities
+
+Remember:
+
+OS = Resource Manager + Control Program
+
+It manages:
+
+CPU
+Memory
+Files
+I/O devices
+Processes
+Security/protection
+2. KERNEL
+
+The kernel is the core part of an operating system.
+
+Operating System
+│
+├── Kernel
+├── Shell / Interface
+├── File management
+├── Device management
+└── Other services
+
+The kernel directly manages hardware resources.
+
+Important
+
+Kernel ≠ entire OS
+
+Kernel is the core of the OS.
+
+3. SHELL
+
+Shell provides an interface through which users interact with the OS.
+
+Example:
+
+User
+ ↓
+Shell
+ ↓
+Kernel
+ ↓
+Hardware
+
+Examples:
+
+Bash
+PowerShell
+Command Prompt
+
+A previous SSC Scientific Assistant question asked which program interacts with the inner part called the kernel; the answer was Shell.
+
+Memory trick
+
+Shell = talks to Kernel
+
+4. SYSTEM CALLS ⭐⭐⭐
+
+This is extremely important.
+
+A system call is a mechanism through which a user program requests a service from the operating system/kernel.
+
+Example:
+
+Program
+   ↓
+System Call
+   ↓
+Kernel
+   ↓
+Hardware/resource
+
+Suppose a program wants to read a file.
+
+It doesn't directly access the disk.
+
+It requests:
+
+read()
+
+The OS handles it.
+
+Types of system calls
+
+Remember these categories:
+
+1. Process control
+
+Examples:
+
+create process
+terminate process
+execute program
+wait
+2. File management
+
+Examples:
+
+create file
+open
+read
+write
+close
+3. Device management
+
+Examples:
+
+request device
+release device
+read device
+write device
+4. Information maintenance
+
+Examples:
+
+get time
+get system information
+5. Communication
+
+Used for communication between processes.
+
+6. Protection
+
+Controls access to resources.
+
+Exam trap
+
+BIOS is NOT a type of system call.
+
+A previous OS question specifically uses this distinction.
+
+5. USER MODE vs KERNEL MODE ⭐⭐⭐
+
+Modern CPUs generally provide different privilege levels.
+
+The important distinction:
+
+USER MODE
+   ↓
+limited privileges
+
+KERNEL MODE
+   ↓
+high privileges
+
+Why?
+
+Security.
+
+Imagine every application could directly modify:
+
+RAM
+CPU control registers
+disk
+other programs' memory
+
+That would be dangerous.
+
+So:
+
+Application
+   ↓
+User Mode
+   ↓
+System Call
+   ↓
+Kernel Mode
+   ↓
+Resource
+Exam point
+
+A system call causes controlled transition from user mode to kernel mode.
+
+PART 2 — PROGRAM vs PROCESS ⭐⭐⭐
+
+This is one of the most important OS concepts.
+
+Program
+
+A program is a passive set of instructions stored somewhere.
+
+Example:
+
+chrome.exe
+
+just sitting on disk.
+
+It is not executing.
+
+Process
+
+A process is a program in execution.
+
+Remember:
+
+Program = passive
+
+Process = active
+
+Example:
+
+Chrome installed
+       ↓
+     Program
+
+Chrome running
+       ↓
+     Process
+6. PROCESS STATES ⭐⭐⭐
+
+A process normally moves through states.
+
+Basic model:
+
+             admit
+ NEW ----------------> READY
+                         |
+                         | scheduler
+                         ↓
+                       RUNNING
+                      /       \
+             I/O wait         exit
+                ↓               ↓
+             WAITING         TERMINATED
+                |
+             I/O complete
+                |
+                ↓
+              READY
+States
+NEW
+
+Process is being created.
+
+READY
+
+Process is ready to execute but waiting for CPU.
+
+RUNNING
+
+Currently executing on CPU.
+
+WAITING / BLOCKED
+
+Waiting for some event, commonly I/O.
+
+TERMINATED
+
+Finished execution.
+
+7. READY vs WAITING ⭐⭐⭐
+
+Very common MCQ.
+
+READY
+
+Process wants CPU.
+
+"I am ready. Give me CPU."
+WAITING
+
+Process is waiting for an event/resource.
+
+"I cannot continue until I/O finishes."
+Memory trick
+
+READY → waiting for CPU
+
+WAITING → waiting for event/I/O
+
+8. PROCESS CONTROL BLOCK — PCB ⭐⭐⭐
+
+The OS needs information about every process.
+
+That information is stored in:
+
+PCB = Process Control Block
+
+Think of PCB as the process's identity card/report card.
+
+It can contain:
+
+Process ID
+Process state
+Program counter
+CPU registers
+Scheduling information
+Memory-management information
+I/O status information
+Accounting information
+Why PCB is important?
+
+Suppose:
+
+Process A running
+
+CPU switches to:
+
+Process B
+
+The OS must save A's state.
+
+That information is stored in A's PCB.
+
+Then B's information is loaded.
+
+This is part of:
+
+Context switching
+
+9. CONTEXT SWITCH ⭐⭐⭐
+
+Suppose:
+
+CPU
+ ↓
+Process A
+
+OS decides to run B.
+
+It does approximately:
+
+Save A's context
+       ↓
+Load B's context
+       ↓
+Run B
+
+This is a context switch.
+
+Context contains things such as:
+registers
+program counter
+process state
+Important
+
+Context switching is overhead.
+
+It doesn't directly perform useful application work.
+
+PART 3 — THREADS ⭐⭐⭐
+
+A thread is the basic unit of CPU execution within a process.
+
+Think:
+
+PROCESS
+│
+├── Thread 1
+├── Thread 2
+└── Thread 3
+
+Multiple threads can belong to the same process.
+
+10. PROCESS vs THREAD
+Process
+
+Generally has its own:
+
+address space
+resources
+execution context
+Threads in same process
+
+Share many process resources such as:
+
+code
+data
+open files
+
+But each thread has its own execution-related state such as:
+
+program counter
+registers
+stack
+Easy analogy
+
+Think of a restaurant.
+
+Restaurant = Process
+
+Workers = Threads
+
+Workers share:
+
+Kitchen
+Tables
+Ingredients
+
+but each worker has their own:
+
+task
+temporary working state
+SSC trap
+
+A thread shares resources with other threads belonging to the same process.
+
+11. USER-LEVEL vs KERNEL-LEVEL THREADS
+User-level threads
+
+Managed mainly by user-level thread library.
+
+Advantages:
+
+fast creation
+fast switching
+
+Potential disadvantage:
+
+if one thread blocks under some models, the whole process may be affected.
+Kernel-level threads
+
+Managed by OS kernel.
+
+Advantages:
+
+OS knows about them
+better support for parallelism depending on implementation
+PART 4 — PROCESS SCHEDULING ⭐⭐⭐
+
+CPU scheduling decides:
+
+Which ready process gets CPU next?
+
+12. FCFS
+
+First Come First Serve
+
+First process arriving gets CPU first.
+
+Example:
+
+P1 → P2 → P3
+
+If they arrive in this order:
+
+P1 runs
+P2 runs
+P3 runs
+Advantage
+
+Simple.
+
+Disadvantage
+
+Can produce large waiting times.
+
+13. SJF ⭐⭐⭐
+
+Shortest Job First
+
+Process with smallest CPU burst is selected first.
+
+Example:
+
+P1 = 8 ms
+P2 = 3 ms
+P3 = 5 ms
+
+Order:
+
+P2 → P3 → P1
+Very important fact
+
+SJF gives the minimum average waiting time under the standard assumptions when burst times are known.
+
+A previous SSC Scientific Assistant question tested exactly this concept.
+
+14. SRTF
+
+Shortest Remaining Time First
+
+This is the preemptive version of SJF.
+
+If a new process arrives with a shorter remaining time, the currently running process can be interrupted.
+
+SJF
+↓
+Non-preemptive
+
+SRTF
+↓
+Preemptive
+15. ROUND ROBIN ⭐⭐⭐
+
+Used especially in time-sharing systems.
+
+Each process gets a fixed:
+
+Time Quantum
+
+Example:
+
+Quantum = 2 ms
+
+P1 → 2 ms
+P2 → 2 ms
+P3 → 2 ms
+P1 → 2 ms
+...
+If quantum is too large
+
+Round Robin starts behaving more like FCFS.
+
+If quantum is too small
+
+Too many context switches.
+
+16. PRIORITY SCHEDULING
+
+CPU goes to the process with highest priority according to the scheduling convention.
+
+⚠️ Exam trap:
+
+Some systems define:
+
+smaller number = higher priority
+
+Others may define the reverse.
+
+So always check the question's convention.
+
+Problem
+
+Starvation
+
+A low-priority process may wait for a very long time.
+
+Solution
+
+Aging
+
+Gradually increase the priority of a waiting process.
+
+17. IMPORTANT SCHEDULING TERMS
+Arrival Time
+
+When process enters ready queue.
+
+Burst Time
+
+CPU time required.
+
+Completion Time
+
+When execution finishes.
+
+Turnaround Time
+TAT = Completion Time - Arrival Time
+Waiting Time
+WT = Turnaround Time - Burst Time
+Response Time
+Response Time =
+First CPU allocation - Arrival Time
+
+⭐ Memorize these.
+
+PART 5 — IPC ⭐⭐⭐
+
+IPC = Inter-Process Communication
+
+Processes sometimes need to communicate.
+
+Two major mechanisms:
+
+1. Shared Memory
+
+Processes share a region of memory.
+
+Process A
+    ↓
+Shared Memory
+    ↑
+Process B
+
+Fast, but synchronization is required.
+
+2. Message Passing
+
+Processes communicate by sending messages.
+
+Process A
+   ↓ message
+Process B
+PART 6 — CONCURRENCY ⭐⭐⭐
+
+Concurrency means multiple tasks/processes make progress during overlapping periods.
+
+Example:
+
+P1 ------
+       P2 ------
+            P3 ------
+
+On a single CPU, the CPU may switch rapidly between processes.
+
+On multiple CPUs/cores, actual parallel execution may occur.
+
+Important distinction
+
+Concurrency ≠ necessarily parallelism
+
+Concurrency = overlapping progress.
+
+Parallelism = actually executing simultaneously on multiple processing units.
+
+18. RACE CONDITION ⭐⭐⭐
+
+Suppose two threads access shared data:
+
+x = 5
+
+Both try:
+
+x = x + 1
+
+If operations interleave badly, final result may not be what we expect.
+
+This is a:
+
+Race condition
+
+The result depends on timing/order of execution.
+
+19. CRITICAL SECTION ⭐⭐⭐
+
+A critical section is a part of a program where shared resources/data are accessed.
+
+Example:
+
+balance = balance - 100;
+
+If multiple processes access balance, this operation may need protection.
+
+Critical-section requirements
+
+Remember:
+
+Mutual exclusion
+Progress
+Bounded waiting
+20. MUTUAL EXCLUSION
+
+Only one process/thread can enter the critical section at a time.
+
+Critical Section
+
+Thread A → ENTER
+
+Thread B → WAIT
+21. SEMAPHORE ⭐⭐⭐
+
+A semaphore is a synchronization mechanism.
+
+Two classic operations:
+
+wait()
+signal()
+
+Often represented conceptually as:
+
+wait(S)
+signal(S)
+Binary semaphore
+
+Values commonly:
+
+0 or 1
+
+Often used similarly to a mutex for mutual exclusion, though semaphores and mutexes are not identical concepts.
+
+Counting semaphore
+
+Can represent multiple available instances of a resource.
+
+Example:
+
+5 printers
+
+Semaphore:
+
+S = 5
+22. MUTEX
+
+Mutex = mutual exclusion lock.
+
+Conceptually:
+
+lock()
+ ↓
+critical section
+ ↓
+unlock()
+
+Only one thread owns the lock at a time.
+
+Exam distinction
+Mutex → ownership-style lock
+Semaphore → signaling/counting mechanism
+PART 7 — DEADLOCK ⭐⭐⭐
+
+Very important.
+
+Deadlock occurs when processes are permanently waiting for resources held by each other.
+
+Example:
+
+P1 holds Printer
+P1 waits for Scanner
+
+P2 holds Scanner
+P2 waits for Printer
+
+Neither can continue.
+
+P1 → waiting for P2
+↑              ↓
+└──────────────┘
+23. FOUR NECESSARY CONDITIONS OF DEADLOCK ⭐⭐⭐
+
+This is a must memorize topic.
+
+Deadlock requires all four:
+
+1. Mutual Exclusion
+
+Resource cannot be simultaneously shared.
+
+2. Hold and Wait
+
+Process holds one resource while waiting for another.
+
+3. No Preemption
+
+Resource cannot simply be forcibly taken away.
+
+4. Circular Wait
+P1 → P2 → P3 → P1
+Memory trick
+
+M H N C
+
+Mutual exclusion
+Hold and wait
+No preemption
+Circular wait
+
+If you break any one of these conditions, deadlock can be prevented.
+
+24. DEADLOCK vs STARVATION
+Deadlock
+
+Processes are waiting for each other/resources in a deadlock situation.
+
+Starvation
+
+A process waits indefinitely because other processes keep getting the resource/CPU.
+
+Memory
+Deadlock → everyone involved gets stuck
+
+Starvation → one process may keep getting ignored
+25. DEADLOCK HANDLING
+
+Four broad approaches:
+
+Prevention
+
+Ensure at least one necessary condition cannot hold.
+
+Avoidance
+
+Make resource-allocation decisions carefully so the system remains in a safe state.
+
+Classic algorithm:
+
+Banker's Algorithm
+
+Detection
+
+Allow deadlock and detect it later.
+
+Recovery
+
+After detection, take corrective action.
+
+PART 8 — MEMORY MANAGEMENT ⭐⭐⭐
+
+Now extremely important.
+
+CPU executes processes.
+
+Processes need memory.
+
+OS manages memory allocation.
+
+26. LOGICAL vs PHYSICAL ADDRESS
+Logical address
+
+Address generated by CPU/program.
+
+Physical address
+
+Actual address in main memory.
+
+CPU
+ ↓
+Logical Address
+ ↓
+MMU
+ ↓
+Physical Address
+ ↓
+RAM
+
+MMU:
+
+Memory Management Unit
+
+27. CONTIGUOUS MEMORY ALLOCATION
+
+A process gets one continuous block of memory.
+
+Example:
+
+RAM
+
+| OS | P1 | P1 | P1 | P2 | P2 | Free |
+
+Problem:
+
+Fragmentation
+
+28. INTERNAL FRAGMENTATION ⭐⭐⭐
+
+Allocated memory contains unused space inside the allocated block.
+
+Example:
+
+Process needs:
+
+18 KB
+
+Allocated block:
+
+20 KB
+
+Unused:
+
+2 KB
+
+That 2 KB is internal fragmentation.
+
+Memory
+
+Internal = inside allocated block
+
+29. EXTERNAL FRAGMENTATION ⭐⭐⭐
+
+Free memory exists, but it is scattered into separate small blocks.
+
+Example:
+
+| P1 | 5KB free | P2 | 4KB free | P3 | 6KB free |
+
+Total free:
+
+15 KB
+
+But a process requiring:
+
+12 KB contiguous
+
+may not fit.
+
+Memory
+
+External = outside blocks / scattered holes
+
+30. PAGING ⭐⭐⭐
+
+Paging solves much of the external-fragmentation problem.
+
+Physical memory is divided into:
+
+Frames
+
+Logical memory is divided into:
+
+Pages
+
+Logical memory       Physical memory
+
+Page 0 ───────────→ Frame 3
+Page 1 ───────────→ Frame 7
+Page 2 ───────────→ Frame 1
+Page 3 ───────────→ Frame 9
+
+Pages need not be physically adjacent.
+
+31. PAGE TABLE
+
+OS maintains mapping:
+
+Page Number → Frame Number
+
+Example:
+
+Page 0 → Frame 5
+Page 1 → Frame 2
+Page 2 → Frame 8
+32. PAGE OFFSET
+
+Logical address is divided conceptually into:
+
+Page Number | Offset
+
+Page number identifies page.
+
+Offset identifies location inside that page.
+
+33. SEGMENTATION
+
+Segmentation divides memory according to logical program units.
+
+Example:
+
+Code
+Data
+Stack
+
+Unlike fixed-size pages, segments can have different sizes.
+
+Paging
+fixed-size pages
+Segmentation
+logical variable-size segments
+34. PAGING vs SEGMENTATION
+Paging	Segmentation
+Fixed-size pages	Variable-size segments
+Programmer doesn't usually see pages as logical units	Reflects logical program units
+Uses frames	Uses segments
+Reduces external fragmentation	Can suffer external fragmentation
+PART 9 — VIRTUAL MEMORY ⭐⭐⭐
+
+Virtual memory allows a process to have an address space larger than the available physical RAM, using secondary storage as part of the mechanism.
+
+Example:
+
+Program
+ ↓
+Virtual Address Space
+ ↓
+RAM + Disk backing
+
+Only needed parts may be brought into RAM.
+
+35. DEMAND PAGING
+
+Pages are loaded into memory when needed.
+
+Suppose:
+
+Page 1 → RAM
+Page 2 → RAM
+Page 3 → not in RAM
+
+Program requests Page 3.
+
+That produces:
+
+Page Fault
+
+36. PAGE FAULT ⭐⭐⭐
+
+A page fault occurs when the required page is not currently in physical memory.
+
+Basic process:
+
+CPU requests page
+       ↓
+Page not in RAM
+       ↓
+PAGE FAULT
+       ↓
+OS loads page from storage
+       ↓
+Page table updated
+       ↓
+Instruction continues
+37. PAGE REPLACEMENT
+
+What if RAM is full?
+
+OS needs to choose a page to remove.
+
+Important algorithms:
+
+FIFO
+
+Remove oldest page.
+
+Optimal
+
+Remove page whose next use is farthest in the future.
+
+This gives the theoretical minimum page faults, but requires future knowledge, so it is generally not directly implementable in a real system.
+
+LRU
+
+Remove page that has not been used for the longest time.
+
+38. BELADY'S ANOMALY ⭐⭐
+
+Interesting exam concept.
+
+In FIFO, increasing the number of frames can sometimes increase the number of page faults.
+
+This is:
+
+Belady's anomaly
+
+Remember:
+
+FIFO → Belady's anomaly possible
+39. THRASHING ⭐⭐⭐
+
+When the system spends too much time handling page faults and too little time doing useful work.
+
+Too many page faults
+        ↓
+Too much disk I/O
+        ↓
+Very little useful CPU work
+        ↓
+THRASHING
+Memory trick
+
+Thrashing = system is busy swapping pages instead of doing useful work
+
+PART 10 — FILE SYSTEM ⭐⭐⭐
+
+OS manages files and directories.
+
+40. FILE
+
+A file is a named collection of related information stored on secondary storage.
+
+Examples:
+
+resume.pdf
+photo.jpg
+program.c
+data.txt
+41. FILE ATTRIBUTES
+
+Typical attributes include:
+
+Name
+Type
+Size
+Location
+Protection
+Creation/modification information
+42. FILE OPERATIONS
+
+Common operations:
+
+create
+open
+read
+write
+seek
+close
+delete
+43. FILE ACCESS METHODS
+Sequential access
+
+Data accessed in sequence.
+
+1 → 2 → 3 → 4 → 5
+Direct / Random access
+
+Can access a particular location directly.
+
+Record 100
+
+without necessarily reading records 1–99 first.
+
+44. DIRECTORY
+
+Directory organizes files.
+
+Example:
+
+College
+│
+├── Notes
+│   ├── OS.pdf
+│   └── DBMS.pdf
+│
+└── Programs
+    ├── main.c
+    └── test.c
+45. FILE ALLOCATION METHODS ⭐⭐⭐
+
+Important methods:
+
+1. Contiguous allocation
+
+File blocks are stored together.
+
+10 11 12 13 14
+
+Advantages:
+
+fast sequential access
+fast direct access
+
+Problem:
+
+external fragmentation
+difficult file growth
+2. Linked allocation
+
+Each block points to the next block.
+
+10 → 25 → 7 → 18
+
+Advantage:
+
+no need for contiguous blocks
+
+Disadvantage:
+
+poor/random access
+3. Indexed allocation
+
+An index block stores pointers to file blocks.
+
+Index Block
+ ↓
+10
+25
+7
+18
+
+Good for direct access.
+
+PART 11 — I/O SYSTEM ⭐⭐
+
+Input/output devices:
+
+keyboard
+mouse
+disk
+printer
+network devices
+
+OS provides an I/O subsystem to manage them.
+
+46. DEVICE DRIVER
+
+A device driver allows the OS to communicate with a particular hardware device.
+
+Application
+ ↓
+OS
+ ↓
+Device Driver
+ ↓
+Hardware
+
+Example:
+
+Printer application
+ ↓
+Printer driver
+ ↓
+Printer
+47. INTERRUPT ⭐⭐⭐
+
+An interrupt is a signal/event that causes the CPU to temporarily stop its current execution flow and handle an event.
+
+Example:
+
+CPU running
+   ↓
+Keyboard event
+   ↓
+Interrupt
+   ↓
+Interrupt handler
+   ↓
+Continue
+48. DMA ⭐⭐⭐
+
+DMA:
+
+Direct Memory Access
+
+Allows certain I/O devices to transfer data to/from memory with reduced CPU involvement in the actual data movement.
+
+Conceptually:
+
+Without DMA:
+
+Device → CPU → Memory
+
+With DMA:
+
+Device → DMA Controller → Memory
+                    ↑
+             CPU sets up transfer
+Exam point
+
+DMA improves efficiency for large data transfers because CPU doesn't have to move every byte/word itself.
+
+49. SPOOLING ⭐⭐
+
+Spooling = placing jobs/data in a buffer/queue, often on disk, so a device can process them later.
+
+Classic example:
+
+Printer queue
+
+Program A ─┐
+Program B ─┼→ Printer Queue → Printer
+Program C ─┘
+PART 12 — OS TYPES ⭐⭐
+
+Know these basic distinctions.
+
+Batch OS
+
+Jobs processed in batches.
+
+Multiprogramming OS
+
+Multiple programs kept in memory so CPU can remain busy.
+
+Multitasking
+
+Multiple tasks appear to execute concurrently through CPU scheduling.
+
+Multiprocessing
+
+Uses multiple processors/cores.
+
+Time-sharing
+
+CPU time divided among users/processes for interactive use.
+
+Real-time OS
+
+Designed to meet timing constraints.
+
+⭐ MOST IMPORTANT COMPARISONS
+Program vs Process
+Program	Process
+Passive	Active
+Stored instructions	Executing program
+No execution state by itself	Has execution state
+Process vs Thread
+Process	Thread
+Larger execution unit	Smaller execution unit
+Own address space generally	Threads of same process share address space
+More expensive to create/switch	Generally cheaper
+IPC can be required	Easy communication through shared process memory, but synchronization is needed
+Deadlock vs Starvation
+Deadlock	Starvation
+Processes can be stuck waiting	A process may wait indefinitely
+Circular wait can be involved	Repeated resource preference can cause it
+System/resource cycle	Unfair resource allocation
+Internal vs External Fragmentation
+Internal → unused space INSIDE allocated block
+
+External → free space OUTSIDE blocks, scattered
+⭐ DAY 6 MASTER MEMORY SHEET
+
+You should be able to reproduce this from memory:
+
+OS
+│
+├── System Calls
+│
+├── Processes
+│   ├── States
+│   ├── PCB
+│   └── Context Switch
+│
+├── Threads
+│
+├── IPC
+│   ├── Shared Memory
+│   └── Message Passing
+│
+├── Synchronization
+│   ├── Critical Section
+│   ├── Mutex
+│   └── Semaphore
+│
+├── Deadlock
+│   ├── Mutual Exclusion
+│   ├── Hold & Wait
+│   ├── No Preemption
+│   └── Circular Wait
+│
+├── Scheduling
+│   ├── FCFS
+│   ├── SJF
+│   ├── SRTF
+│   ├── Round Robin
+│   └── Priority
+│
+├── Memory
+│   ├── Logical/Physical
+│   ├── Fragmentation
+│   ├── Paging
+│   ├── Segmentation
+│   └── Virtual Memory
+│
+├── Page Replacement
+│   ├── FIFO
+│   ├── Optimal
+│   └── LRU
+│
+├── File System
+│
+└── I/O
+    ├── Interrupt
+    ├── DMA
+    └── Device Driver
+🔥 FORMULAS YOU MUST REMEMBER
+Turnaround Time
+$$ TAT = Completion\ Time - Arrival\ Time $$
+Waiting Time
+$$ WT = TAT - Burst\ Time $$
+Response Time
+$$ RT = First\ CPU\ Start - Arrival\ Time $$
+CPU Utilization
+$$ CPU\ Utilization = \frac{CPU\ Busy\ Time}{Total\ Time}\times100 $$
+🧠 EXAM TRAPS
+
+Memorize these:
+
+Program ≠ Process
+Ready ≠ Waiting
+PCB stores process information
+Context switch is overhead
+Threads of same process share many resources
+SJF minimizes average waiting time under standard assumptions
+SRTF = preemptive SJF
+Round Robin uses time quantum
+Aging helps prevent starvation
+Deadlock requires all 4 necessary conditions
+Banker's algorithm → deadlock avoidance
+Internal fragmentation → inside allocated block
+External fragmentation → scattered free space
+Paging uses pages + frames
+Page fault ≠ page replacement
+FIFO can suffer Belady's anomaly
+LRU removes least recently used page
+Thrashing = excessive paging
+DMA reduces CPU involvement in data transfer
+Shell interacts with the kernel
+BIOS is not a system-call category
+System call provides interface to OS services
+🔥 PYQ CONNECTION
+
+The older SSC Scientific Assistant paper demonstrates that OS questions can be very direct rather than requiring extremely advanced theory.
+
+Examples include:
+
+What controls overall computer functions? → OS
+Which OS service is not supported?
+What resources do threads share?
+Memory allocation concepts
+Unix characteristics
+Shell/kernel
+Scheduling and SJF
+
+So don't study OS as only definitions. You need to recognize one-line conceptual traps quickly.
+
+The available previous-paper collections also identify 2017 and 2022 Scientific Assistant CS/IT papers, including a 2022 CS/IT paper, so we can use those in the later PYQ-heavy phase.
+
+📝 NOW YOUR DAY 6 TEST
+
+Do NOT look for answers online.
+I am deliberately not giving the answers yet, as required by your preparation system.
+
+Reply only like:
+
+1-B
+2-C
+3-A
+...
+Section A — OS Fundamentals
+Q1 — CONCEPT PRACTICE
+
+A program that is currently executing is called:
+
+A) Thread
+B) Process
+C) File
+D) Compiler
+
+Q2 — SSC-STYLE
+
+Which component is the core of an operating system?
+
+A) Shell
+B) Kernel
+C) Compiler
+D) Loader
+
+Q3 — CONCEPT PRACTICE
+
+Which state means that a process is waiting for CPU allocation?
+
+A) Running
+B) Waiting
+C) Ready
+D) Terminated
+
+Q4 — SSC-STYLE
+
+Which of the following stores information about a process?
+
+A) PCB
+B) Page table
+C) FAT
+D) Cache
+
+Q5 — CONCEPTUAL
+
+A context switch primarily involves:
+
+A) Changing source code
+B) Saving and restoring process execution state
+C) Increasing RAM
+D) Compiling a program
+
+Section B — Threads & Scheduling
+Q6 — SSC-STYLE
+
+Threads belonging to the same process generally share:
+
+A) Their program counters
+B) Their registers
+C) Code and data
+D) Their individual stacks
+
+Q7 — CONCEPTUAL
+
+Which scheduling algorithm uses a time quantum?
+
+A) FCFS
+B) SJF
+C) Round Robin
+D) SRTF
+
+Q8 — SSC-STYLE
+
+Which scheduling algorithm is theoretically optimal for minimizing average waiting time under standard assumptions?
+
+A) FCFS
+B) SJF
+C) Round Robin
+D) Priority
+
+Q9 — CONCEPTUAL
+
+SRTF is the:
+
+A) Non-preemptive version of FCFS
+B) Preemptive version of SJF
+C) Preemptive version of FCFS
+D) Non-preemptive version of Round Robin
+
+Q10 — CONCEPTUAL
+
+Aging is primarily used to reduce:
+
+A) Deadlock
+B) Starvation
+C) Fragmentation
+D) Thrashing
+
+Section C — Synchronization & Deadlock
+Q11 — SSC-STYLE
+
+Which is NOT one of the four necessary conditions for deadlock?
+
+A) Mutual exclusion
+B) Hold and wait
+C) Circular wait
+D) Aging
+
+Q12 — CONCEPTUAL
+
+A race condition occurs when:
+
+A) CPU temperature becomes high
+B) Result depends on timing/order of concurrent access
+C) RAM becomes full
+D) A process terminates
+
+Q13 — CONCEPTUAL
+
+Which is primarily used for mutual exclusion?
+
+A) Mutex
+B) Compiler
+C) Loader
+D) Linker
+
+Q14 — SSC-STYLE
+
+Banker's algorithm is associated with:
+
+A) Deadlock avoidance
+B) Deadlock detection only
+C) CPU scheduling
+D) Page replacement
+
+Q15 — CONCEPTUAL
+
+Which mechanism allows processes to communicate through a common memory region?
+
+A) Shared memory
+B) FCFS
+C) Paging
+D) Spooling
+
+Section D — Memory Management
+Q16 — SSC-STYLE
+
+Unused space inside an allocated memory block is:
+
+A) External fragmentation
+B) Internal fragmentation
+C) Paging
+D) Segmentation
+
+Q17 — CONCEPTUAL
+
+In paging, physical memory is divided into:
+
+A) Pages
+B) Frames
+C) Segments
+D) Blocks only
+
+Q18 — CONCEPTUAL
+
+A logical address is converted to a physical address using hardware such as:
+
+A) ALU
+B) MMU
+C) DMA
+D) PCB
+
+Q19 — SSC-STYLE
+
+Which page replacement algorithm can exhibit Belady's anomaly?
+
+A) FIFO
+B) LRU
+C) Optimal
+D) None
+
+Q20 — CONCEPTUAL
+
+A page fault occurs when:
+
+A) A page is not currently in physical memory
+B) CPU fails
+C) Disk is permanently damaged
+D) A process terminates
+
+Section E — Virtual Memory / File System / I/O
+Q21
+
+Thrashing occurs when:
+
+A) CPU performs too many calculations
+B) Excessive paging leaves little time for useful execution
+C) Files become fragmented
+D) Processes terminate rapidly
+
+Q22
+
+Which algorithm removes the page that has not been used for the longest time?
+
+A) FIFO
+B) LRU
+C) FCFS
+D) SJF
+
+Q23
+
+Which file allocation method stores pointers to file blocks in an index block?
+
+A) Contiguous
+B) Linked
+C) Indexed
+D) Sequential
+
+Q24
+
+DMA primarily helps by:
+
+A) Eliminating RAM
+B) Reducing CPU involvement in data transfer
+C) Increasing process priority
+D) Preventing deadlock
+
+Q25
+
+Which program provides an interface through which users can interact with the operating system?
+
+A) Shell
+B) ALU
+C) Cache
+D) PCB
+
+🔥 5 CHALLENGE QUESTIONS
+
+These are deliberately harder.
+
+Q26 — NUMERICAL
+
+Three processes have:
+
+Process	Arrival	Burst
+P1	0	5
+P2	1	3
+P3	2	1
+
+Under non-preemptive SJF, which process executes second?
+
+A) P1
+B) P2
+C) P3
+D) Cannot determine
+
+Q27 — CONCEPTUAL
+
+Which combination is correct?
+
+A) Paging → variable-size pages
+B) Segmentation → fixed-size segments
+C) Paging → pages and frames
+D) Paging → only contiguous allocation
+
+Q28 — DEADLOCK
+
+Suppose:
+
+P1 holds R1 and waits for R2
+
+P2 holds R2 and waits for R1
+
+Which deadlock condition is clearly present?
+
+A) Circular wait
+B) No preemption only
+C) Aging
+D) Paging
+
+Q29 — SCHEDULING
+
+A process has:
+
+Arrival Time = 3
+Completion Time = 15
+Burst Time = 7
+
+Its waiting time is:
+
+A) 5
+B) 7
+C) 12
+D) 15
+
+Q30 — MIXED
+
+Which statement is correct?
+
+A) FIFO cannot suffer Belady's anomaly
+B) SJF always means preemptive scheduling
+C) Threads of the same process can share code/data
+D) External fragmentation means unused space inside an allocated block
+
+🔁 PREVIOUS-DAY RETENTION
+
+Because the uploaded plan tells me to revise previous topics but does not contain your actual Day 5 progress/results, I won't invent a Day-5 score or pretend you mastered topics that I cannot verify.
+
+Answer these 5 foundation questions as well:
+
+Q31
+
+Which data structure follows LIFO?
+
+A) Queue
+B) Stack
+C) Linked list
+D) Tree
+
+Q32
+
+Binary search requires the data to be:
+
+A) Random
+B) Sorted
+C) Duplicated
+D) Hashed
+
+Q33
+
+Time complexity of binary search is:
+
+A) O(n)
+B) O(log n)
+C) O(n²)
+D) O(1) always
+
+Q34
+
+Which traversal uses:
+
+Left → Root → Right
+
+A) Preorder
+B) Postorder
+C) Inorder
+D) Level order
+
+Q35
+
+Which data structure is normally used for BFS?
+
+A) Stack
+B) Queue
+C) Heap
+D) Array only
+
+📊 TODAY'S TARGET
+
+Don't worry about memorizing every sentence above.
+
+By the end of Day 6, you should be able to answer questions involving:
+
+OS
+│
+├── Kernel / Shell
+├── System Calls
+├── User / Kernel Mode
+├── Process / Thread
+├── PCB / Context Switch
+├── Process States
+├── Scheduling
+│   ├── FCFS
+│   ├── SJF
+│   ├── SRTF
+│   ├── RR
+│   └── Priority
+├── IPC
+├── Synchronization
+├── Semaphore / Mutex
+├── Race Condition
+├── Critical Section
+├── Deadlock
+├── Memory Management
+├── Fragmentation
+├── Paging
+├── Segmentation
+├── Virtual Memory
+├── Page Fault
+├── FIFO / LRU / Optimal
+├── Thrashing
+├── File System
+├── Interrupt
+└── DMA
+
+Paper-I level: direct definitions, comparisons, traps, basic numerical questions.
+
+Paper-II depth: process scheduling, synchronization, deadlock, paging, virtual memory and related numerical/conceptual problems. The syllabus specifically includes these areas, so they will remain in our Paper-II revision cycle.
+
+Your task now
+
+Send:
+
+1-B
+2-...
+...
+35-...
+
+Don't check answers first. After you submit, I will calculate your accuracy + weak OS topics + DSA retention, explain every wrong answer, reteach weak areas, and use the result to decide Day 7 priority.
+
+Your file library is full. New files won't be saved to your library, but you can still use them in this chat. To store new files for later, free up space or upgrade your storage.
+Rejoin Plus
+Manage
